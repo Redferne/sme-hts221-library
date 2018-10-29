@@ -166,16 +166,18 @@ HTS221::bduDeactivate(void)
 }
 
 
-const double
+const float
 HTS221::readHumidity(void)
 {
     uint8_t data   = 0;
     uint16_t h_out = 0;
-    double h_temp  = 0.0;
-    double hum     = 0.0;
+    float h_temp  = 0.0;
+    float hum     = 0.0;
 
     data = readRegister(_address, STATUS_REG);
-
+    if (!(data & HUMIDITY_READY)) {
+        data = readRegister(_address, STATUS_REG);
+    }
     if (data & HUMIDITY_READY) {
         data = readRegister(_address, HUMIDITY_H_REG);
         h_out = data << 8;  // MSB
@@ -186,26 +188,29 @@ HTS221::readHumidity(void)
         hum = ((int16_t)(_h1_rH) - (int16_t)(_h0_rH))/2.0;  // remove x2 multiple
 
         // Calculate humidity in decimal of grade centigrades i.e. 15.0 = 150.
-        h_temp = (double)(((int16_t)h_out - (int16_t)_H0_T0) * hum) / 
-	         (double)((int16_t)_H1_T0 - (int16_t)_H0_T0);
-        hum    = (double)((int16_t)_h0_rH) / 2.0; // remove x2 multiple
+        h_temp = (float)(((int16_t)h_out - (int16_t)_H0_T0) * hum) /
+	         (float)((int16_t)_H1_T0 - (int16_t)_H0_T0);
+        hum    = (float)((int16_t)_h0_rH) / 2.0; // remove x2 multiple
         _humidity = (hum + h_temp); // provide signed % measurement unit
+        return _humidity;
     }
-    return _humidity;
+    return NAN;
 }
 
 
 
-const double
+const float
 HTS221::readTemperature(void)
 {
     uint8_t data   = 0;
     uint16_t t_out = 0;
-    double t_temp  = 0.0;
-    double deg     = 0.0;
+    float t_temp  = 0.0;
+    float deg     = 0.0;
 
     data = readRegister(_address, STATUS_REG);
-
+    if (!(data & TEMPERATURE_READY)) {
+        data = readRegister(_address, STATUS_REG);
+    }
     if (data & TEMPERATURE_READY) {
 
         data= readRegister(_address, TEMP_H_REG);
@@ -214,19 +219,17 @@ HTS221::readTemperature(void)
         t_out |= data;      // LSB
 
         // Decode Temperature
-        deg    = (double)((int16_t)(_T1_degC) - (int16_t)(_T0_degC))/8.0; // remove x8 multiple
+        deg    = (float)((int16_t)(_T1_degC) - (int16_t)(_T0_degC))/8.0; // remove x8 multiple
 
         // Calculate Temperature in decimal of grade centigrades i.e. 15.0 = 150.
-        t_temp = (double)(((int16_t)t_out - (int16_t)_T0_OUT) * deg) / 
-	         (double)((int16_t)_T1_OUT - (int16_t)_T0_OUT);
-        deg    = (double)((int16_t)_T0_degC) / 8.0;     // remove x8 multiple
+        t_temp = (float)(((int16_t)t_out - (int16_t)_T0_OUT) * deg) /
+	         (float)((int16_t)_T1_OUT - (int16_t)_T0_OUT);
+        deg    = (float)((int16_t)_T0_degC) / 8.0;     // remove x8 multiple
         _temperature = deg + t_temp;   // provide signed celsius measurement unit
+        return _temperature;
     }
-
-    return _temperature;
+    return NAN;
 }
-
-
 
 // Read a single byte from addressToRead and return it as a byte
 byte HTS221::readRegister(byte slaveAddress, byte regToRead)

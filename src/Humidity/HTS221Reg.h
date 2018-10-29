@@ -60,7 +60,7 @@ read also.
  * will do at init phase
  */
 #define CALIB_START        0x30
-#define CALIB_END	       0x3F
+#define CALIB_END	         0x3F
 /*
 #define CALIB_T0_DEGC_X8   0x32
 #define CALIB_T1_DEGC_X8   0x33

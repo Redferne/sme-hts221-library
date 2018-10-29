@@ -23,24 +23,20 @@ public:
     bool bduActivate(void);
     bool bduDeactivate(void);
 
-    const double readHumidity(void);
-    const double readTemperature(void);
+    const float readHumidity(void);
+    const float readTemperature(void);
 private:
     bool storeCalibration(void);
     unsigned char _h0_rH, _h1_rH;
     unsigned int  _T0_degC, _T1_degC;
     unsigned int  _H0_T0, _H1_T0;
     unsigned int  _T0_OUT, _T1_OUT;
-    double _temperature;
-    double _humidity;
+    float _temperature;
+    float _humidity;
     uint8_t _address;
 
     byte readRegister(byte slaveAddress, byte regToRead);
     bool writeRegister(byte slaveAddress, byte regToWrite, byte dataToWrite);
 };
-
-
-extern HTS221 smeHumidity;
-
 
 #endif /* HTS221_H_ */
