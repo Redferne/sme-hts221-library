@@ -17,7 +17,6 @@
 #define WHO_AM_I_RETURN    0xBC //This read-only register contains the device identifier, set to BCh
 
 #define AVERAGE_REG        0x10	// To configure humidity/temperature average.
-#define AVERAGE_DEFAULT    0x1B
 
 /*
  * [7] PD: power down control

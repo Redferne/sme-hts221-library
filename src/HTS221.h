@@ -11,6 +11,11 @@
 
 #include <Arduino.h>
 
+#define AVERAGE_DEFAULT    0x1B // 16T & 32H samples
+#define AVERAGE_32_64      0x24 // 32T & 64H samples
+#define AVERAGE_64_128     0x2D // 64T & 128H samples
+#define AVERAGE_128_256    0x36 // 128T & 256H samples
+#define AVERAGE_256_512    0x3F // 256T & 512H samples
 
 class HTS221
 {
@@ -18,6 +23,7 @@ public:
     HTS221(void);
     bool begin(void);
     bool activate(void);
+    bool samples(uint8_t);
     bool deactivate(void);
 
     bool bduActivate(void);
@@ -35,8 +41,8 @@ private:
     float _humidity;
     uint8_t _address;
 
-    byte readRegister(byte slaveAddress, byte regToRead);
-    bool writeRegister(byte slaveAddress, byte regToWrite, byte dataToWrite);
+    byte readRegister(uint8_t slaveAddress, uint8_t regToRead);
+    bool writeRegister(uint8_t slaveAddress, uint8_t regToWrite, uint8_t dataToWrite);
 };
 
 #endif /* HTS221_H_ */

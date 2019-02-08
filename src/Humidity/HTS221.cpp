@@ -116,19 +116,20 @@ HTS221::storeCalibration(void)
 }
 
 
-bool
-HTS221::activate(void)
+bool HTS221::activate(void)
 {
     uint8_t data;
 
     data = readRegister(_address, CTRL_REG1);
     data |= POWER_UP;
     data |= ODR0_SET;
-    writeRegister(_address, CTRL_REG1, data);
-
-    return true;
+    return (writeRegister(_address, CTRL_REG1, data));
 }
 
+bool HTS221::samples(uint8_t av_conf)
+{
+    return (writeRegister(_address, AVERAGE_REG, av_conf));
+}
 
 bool HTS221::deactivate(void)
 {
@@ -136,8 +137,7 @@ bool HTS221::deactivate(void)
 
     data = readRegister(_address, CTRL_REG1);
     data &= ~POWER_UP;
-    writeRegister(_address, CTRL_REG1, data);
-    return true;
+    return (writeRegister(_address, CTRL_REG1, data));
 }
 
 
@@ -232,7 +232,7 @@ HTS221::readTemperature(void)
 }
 
 // Read a single byte from addressToRead and return it as a byte
-byte HTS221::readRegister(byte slaveAddress, byte regToRead)
+uint8_t HTS221::readRegister(uint8_t slaveAddress, uint8_t regToRead)
 {
     Wire.beginTransmission(slaveAddress);
     Wire.write(regToRead);
@@ -245,7 +245,7 @@ byte HTS221::readRegister(byte slaveAddress, byte regToRead)
 }
 
 // Writes a single byte (dataToWrite) into regToWrite
-bool HTS221::writeRegister(byte slaveAddress, byte regToWrite, byte dataToWrite)
+bool HTS221::writeRegister(uint8_t slaveAddress, uint8_t regToWrite, uint8_t dataToWrite)
 {
     Wire.beginTransmission(slaveAddress);
 
